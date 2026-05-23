@@ -20,6 +20,72 @@ def fallback_analyze(leads: list[dict], competitor: str = "", reason: str = "") 
     }
 
 
+def fallback_apollo(
+    enriched_leads: list[dict] | None = None,
+    reason: str = "",
+) -> dict:
+    block: dict = {
+        "authorized": True,
+        "fallback": True,
+        "connected_account": {
+            "connection_name": "apollo-demo",
+            "identifier": "demo@rivalintel.app",
+            "status": "ACTIVE",
+            "provider": "APOLLO",
+        },
+        "list_sequences": {
+            "data": {
+                "emailer_campaigns": [
+                    {"id": "seq-demo-1", "name": "Competitor Outage Follow-up"},
+                    {"id": "seq-demo-2", "name": "Payment Reliability Outreach"},
+                ],
+                "pagination": {
+                    "total_entries": 2,
+                    "page": 1,
+                    "total_pages": 1,
+                    "per_page": 25,
+                },
+            },
+        },
+        "fallback_reason": reason or "Apollo/Scalekit unavailable — demo Apollo block",
+    }
+    if enriched_leads:
+        block["enriched_leads"] = enriched_leads
+        block["enrichment_summary"] = {
+            "attempted": len(enriched_leads),
+            "matched": len(enriched_leads),
+            "source": "demo_random",
+            "note": "Randomized email and +1 (XXX) XXX XXXX phone for demo",
+        }
+    return block
+
+
+def fallback_auth_link(reason: str = "") -> dict:
+    return {
+        "link": None,
+        "already_connected": True,
+        "connection_name": "apollo-demo",
+        "fallback": True,
+        "fallback_reason": reason or "Apollo demo mode — no OAuth link needed",
+        "connected_account": {
+            "identifier": "demo@rivalintel.app",
+            "status": "ACTIVE",
+            "provider": "APOLLO",
+        },
+    }
+
+
+def fallback_apollo_status(reason: str = "") -> dict:
+    return {
+        "connection_name": "apollo-demo",
+        "identifier": "demo@rivalintel.app",
+        "status": "ACTIVE",
+        "provider": "APOLLO",
+        "fallback": True,
+        "fallback_reason": reason or "Scalekit unavailable — demo status",
+    }
+
+
 def fallback_post_call(
     lead_name: str,
     company: str,
